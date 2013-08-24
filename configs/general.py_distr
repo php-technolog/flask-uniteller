@@ -1,0 +1,37 @@
+# -*- coding: utf-8 -*-
+"""
+    Настройки проекта
+
+    :copyright: (c) 2013 by Pavel Lyashkov.
+    :license: BSD, see LICENSE for more details.
+"""
+
+
+class Config(object):
+    DEBUG = False
+    TESTING = False
+
+    SECRET_KEY = 'F\x03Dk\x1f@\xaa_5{\xf5m\xf2\x99\x9e\x1c\n\xe7{\xfb\x8aQ\xdae'
+
+    LOG_FOLDER = './logs'
+
+
+class ProductionConfig(Config):
+    SQLALCHEMY_BINDS = {
+        'test': 'mysql://user:pass@localhost/term?charset=utf8',
+    }
+    SQLALCHEMY_ECHO = False
+    SQLALCHEMY_RECORD_QUERIES = True
+
+
+class DevelopmentConfig(Config):
+    SQLALCHEMY_ECHO = True
+    SQLALCHEMY_BINDS = {
+        'test': 'mysql://user:pass@localhost/term?charset=utf8',
+    }
+    DEBUG = True
+    SQLALCHEMY_RECORD_QUERIES = True
+
+
+class TestingConfig(Config):
+    TESTING = True

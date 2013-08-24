@@ -15,6 +15,7 @@ class UnitellerConfig(object):
         'results',
         'unblock',
         'recurrent',
+        'confirm',
 
     )
 

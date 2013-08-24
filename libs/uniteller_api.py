@@ -105,7 +105,7 @@ class UnitellerApi(object):
 
         return return_data
 
-    def get_payment_info(self):
+    def get_payment_info(self, order_id=None):
         return_data = False
 
         keys = (
@@ -128,8 +128,8 @@ class UnitellerApi(object):
             Success=self.success
         )
 
-        if self.order_id:
-            data['ShopOrderNumber'] = self.order_id
+        if order_id:
+            data['ShopOrderNumber'] = order_id
 
         result = self.set_request(self.get_url('results'), data)
 
@@ -138,6 +138,7 @@ class UnitellerApi(object):
                 tree = etree.fromstring(result.response.body)
             except Exception as e:
                 app.logger.error(e)
+                app.logger.error(result.response.body)
             else:
                 event_nodes = tree.xpath(
                     '/unitellerresult/orders/order')
@@ -177,4 +178,25 @@ class UnitellerApi(object):
                     response_code = row[1]
             return_data = response_code
 
+        return return_data
+
+    def unblock_payment(self, order_id):
+        return_data = False
+
+        info = self.get_payment_info(order_id)
+
+        if info:
+            data = dict(
+                Billnumber=info[str(order_id)]['billnumber'],
+                Shop_ID=self.shop_id,
+                Login=self.login,
+                Password=self.password,
+            )
+
+            result = self.set_request(self.get_url('unblock'), data)
+            if result:
+                data = result.response.body
+                reader = csv.DictReader(data.split('\n'), delimiter=';')
+                if not 'ErrorCode' in reader.fieldnames:
+                    return_data = True
         return return_data

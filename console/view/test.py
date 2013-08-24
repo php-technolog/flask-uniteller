@@ -16,6 +16,5 @@ class TestCommand(Command):
 
     def run(self):
         un = UnitellerApi(UnitellerConfig)
-        un.order_id = 20
 
-        print un.get_payment_info()
+        print un.confirm_payment(99)

@@ -180,7 +180,7 @@ class UnitellerApi(object):
 
         return return_data
 
-    def unblock_payment(self, order_id):
+    def _request(self, order_id, method):
         return_data = False
 
         info = self.get_payment_info(order_id)
@@ -193,10 +193,16 @@ class UnitellerApi(object):
                 Password=self.password,
             )
 
-            result = self.set_request(self.get_url('unblock'), data)
+            result = self.set_request(self.get_url(method), data)
             if result:
                 data = result.response.body
                 reader = csv.DictReader(data.split('\n'), delimiter=';')
                 if not 'ErrorCode' in reader.fieldnames:
                     return_data = True
         return return_data
+
+    def unblock_payment(self, order_id):
+        return self._request(order_id, 'unblock')
+
+    def confirm_payment(self, order_id):
+        return self._request(order_id, 'confirm')
